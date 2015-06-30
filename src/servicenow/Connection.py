@@ -2,7 +2,7 @@ import requests
 import logging
 import json
 
-from servicenow import Utils
+from servicenow import Utils, InvalidCredentials
 
 class Auth(object):
 
@@ -110,4 +110,6 @@ class Auth(object):
         return self.session.post('%s/%s' % (self.instance, table), params=params, timeout=self.timeout)
 
     def _format(self, response):
+        if response.status_code == 401:
+            raise InvalidCredentials()
         return json.loads(response.text)
